@@ -1,0 +1,21 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+  - name: upgrade all packages
+    yum: name="*" state=latest
+  - name: install multiple packages
+    action: yum name="{{item}}" enablerepo=epel state=present 
+    with_items:
+    - vim 
+    - tcpdump 
+    - zsh
+    - git
+    - tmux
+    - python-pycurl
+    - s3cmd
+    - curl
+  - name: vim for ec2-user
+    sudo: yes
+    copy: src='templates/home_ec2-user_.vimrc' dest='/home/ec2-user/.vimrc' mode=644
+

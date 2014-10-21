@@ -1,0 +1,107 @@
+hosts: all
+  sudo: True
+  include: ./redhat.yml
+
+hosts: all
+  sudo: True
+  include: ./utils.yml
+
+#- hosts: all
+#  sudo: True
+#  include: ./add_leshop.yml
+ 
+- hosts: all
+  sudo: True
+  include: ./monitoring.yml
+
+- hosts: riak_cluster
+  sudo: True
+  tasks:
+  - name: add github key
+    lineinfile: dest=/etc/ssh/ssh_known_hosts line='|1|KWI6LgcTkLS4a3J/jfyOaS6CIKE=|VIpECtP9TDwqZvzNIUSd01ZyKTI= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==' owner=root state=present create=True
+
+- hosts: all
+  sudo: True
+  include: ./erlangs.yml
+
+- hosts: all
+  sudo: True
+  include: ./riak.yml
+
+#- hosts: riak_cluster
+#  sudo: True
+#  tasks:
+#  - stat: path=/home/ec2-user/otp_src_R16B03/otp_src_R16B03/README.md
+#    register: erlang_downloaded
+#
+#  - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
+#    register: riak_installed
+#
+#  - name: checkout riak_ee
+#    sudo: no
+#    git: repo=git@github.com:basho/riak_ee.git dest=riak_ee version=riak_ee-2.0.0
+#    register: git_result
+#    when: not riak_installed.stat.exists
+#
+#  - name: checkout riak_ee-2.0.1
+#    sudo: no
+#    git: repo=git@github.com:basho/riak_ee.git dest=riak_ee.2.0.1 version=riak_ee-2.0.1 
+#    register: git_result
+#    when: not riak_installed.stat.exists
+#
+#  - name: install build dependencies
+#    action: yum name="{{item}}" enablerepo=epel state=present 
+#    with_items:
+#    - java-1.6.0-openjdk.x86_64
+#    - libpam0g-dev
+#    - libffi-dev
+#    - maven
+#
+#  - stat: path=/usr/local/bin/erl
+#    register: erlang_installed
+#
+#  - stat: path=/home/ec2-user/otp_src_R16B03/otp_src_R16B03/README.md
+#    register: erlang_downloaded
+#
+#  - name: download erlang archive
+#    sudo: True
+#    get_url: url=https://s3-eu-west-1.amazonaws.com/bhunt-erlangs/otp_src_R16B03.tar.gz dest=/home/ec2-user/otp_src_R16B03.tar.gz mode=0440 force=no
+#    when: not erlang_installed.stat.exists
+#
+#  - file: path=/home/ec2-user/otp_src_R16B03 mode=0644 state=directory
+#    when: not erlang_installed.stat.exists
+#
+#  - name: extract
+#    sudo: True
+#    unarchive: src=/home/ec2-user/otp_src_R16B03.tar.gz dest=/home/ec2-user/otp_src_R16B03 copy=no creates=/home/ec2-user/otp_src_R16B03/otp_src_R16B03/README.md
+#    when: not erlang_installed.stat.exists
+#
+#  - name: Install custom erlang
+#    sudo: True
+#    shell: "cd /home/ec2-user/otp_src_R16B03/otp_src_R16B03/ && ./configure && make && make install"
+#    when: not erlang_installed.stat.exists
+#
+#  - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
+#    register: riak_devrel_riak
+#
+#  - name: build riak devrel 6
+#    sudo: no
+#    shell: "(cd /home/ec2-user/riak_ee/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
+#    when: not riak_devrel_riak.stat.exists
+#
+#  - name: build riak devrel 6 (2.0.1)
+#    sudo: no
+#    shell: "(cd /home/ec2-user/riak_ee.2.0.1/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.2.0.1.log"
+#    when: not riak_devrel_riak.stat.exists
+#
+##  - name: create riak_ee_5_nodes.tgz archive
+##    sudo: no 
+##    shell: "cd /home/ec2-user && tar zcvfp /ec2-user/riak_ee_5_nodes.tgz ./riak_ee --exclude=.git --exclude=deps &> /dev/null"
+#
+#  - name: ulimit for ec2-user/leshop user
+#    sudo: yes
+#    copy: src='../templates/etc_security_limits.d_leshop.conf' dest='/etc/security/limits.d/leshop.conf' mode=644
+#
+#- hosts: all
+#  sudo: True
+#  include: ./main.yml

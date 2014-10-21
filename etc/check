@@ -1,0 +1,1 @@
+test -f hosts || echo "no hosts file available"

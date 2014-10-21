@@ -1,0 +1,32 @@
+- hosts: all
+  sudo: True
+  tasks:
+
+  - name: checkout riak_ee-1.4.10
+    sudo: no
+    git: repo=git@github.com:basho/riak_ee.git dest=riak_ee version=riak_ee-1.4.10
+    register: git_result
+    when: not riak_installed.stat.exists
+
+  - name: checkout riak-1.4.10
+    sudo: no
+    git: repo=git@github.com:basho/riak.git dest=riak version=riak-1.4.10
+    register: git_result
+    when: not riak_installed.stat.exists
+
+  - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
+    register: riak_devrel_riak
+
+  - name: build riak devrel 6
+    sudo: no
+    shell: "(cd /home/ec2-user/riak_ee/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
+    when: not riak_ee_devrel_riak.stat.exists
+
+  - name: build riak devrel 6 (2.0.1)
+    sudo: no
+    shell: "(cd /home/ec2-user/riak/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
+    when: not riak_devrel_riak.stat.exists
+
+  - name: ulimit for ec2-user
+    sudo: yes
+    copy: src='./templates/etc_security_limits.d_ec2-user.conf' dest='/etc/security/limits.d/ec2-user.conf' mode=644
