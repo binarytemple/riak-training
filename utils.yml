@@ -16,3 +16,4 @@
     - s3cmd
     - curl
     - libselinux-python
+    - htop

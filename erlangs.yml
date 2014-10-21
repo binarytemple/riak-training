@@ -37,25 +37,25 @@
   - stat: path=/usr/local/bin/erl
     register: erlang_installed
 
-  - stat: path=/home/ec2-user/otp_src_R16B03/otp_src_R16B03/README.md
+  - stat: path=/home/ec2-user/otp_src_R15B01/otp_src_R15B01/README.md
     register: erlang_downloaded
 
   - name: download erlang archive
     sudo: no
-    get_url: url=https://s3-eu-west-1.amazonaws.com/bhunt-erlangs/otp_src_R16B03.tar.gz dest=/home/ec2-user/otp_src_R16B03.tar.gz mode=0440 force=no
+    get_url: url=http://www.erlang.org/download/otp_src_R15B01.tar.gz dest=/home/ec2-user/otp_src_R15B01.tar.gz mode=0440 force=no
     when: not erlang_installed.stat.exists
 
-  - file: path=/home/ec2-user/otp_src_R16B03 mode=0644 state=directory
+  - file: path=/home/ec2-user/otp_src_R15B01 mode=0644 state=directory
     when: not erlang_installed.stat.exists
 
   - name: extract
     sudo: no
-    unarchive: src=/home/ec2-user/otp_src_R16B03.tar.gz dest=/home/ec2-user/otp_src_R16B03 copy=no creates=/home/ec2-user/otp_src_R16B03/otp_src_R16B03/README.md
+    unarchive: src=/home/ec2-user/otp_src_R15B01.tar.gz dest=/home/ec2-user/otp_src_R15B01 copy=no creates=/home/ec2-user/otp_src_R15B01/otp_src_R15B01/README.md
     when: not erlang_installed.stat.exists
 
   - name: Install custom erlang
     sudo: True
-    shell: "cd /home/ec2-user/otp_src_R16B03/otp_src_R16B03/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
+    shell: "cd /home/ec2-user/otp_src_R15B01/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
     when: not erlang_installed.stat.exists
 
 #  - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
