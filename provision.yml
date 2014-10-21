@@ -1,8 +1,8 @@
-hosts: all
+- hosts: all
   sudo: True
   include: ./redhat.yml
 
-hosts: all
+- hosts: all
   sudo: True
   include: ./utils.yml
 
