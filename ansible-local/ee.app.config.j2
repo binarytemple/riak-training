@@ -1,3 +1,5 @@
+
+
 %% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
 %% ex: ft=erlang ts=4 sw=4 et
 [
@@ -12,7 +14,7 @@
 
             %% pb is a list of IP addresses and TCP ports that the Riak
             %% Protocol Buffers interface will bind.
-            {pb, [ {"127.0.0.1", 10017 } ]}
+            {pb, [ {"127.0.0.1", 100{{item}}7 } ]}
             ]},
 
  %% Riak Core config
@@ -31,11 +33,11 @@
 
               %% http is a list of IP addresses and TCP ports that the Riak
               %% HTTP interface will bind.
-              {http, [ {"127.0.0.1", 10018 } ]},
+              {http, [ {"127.0.0.1", 100{{item}}8 } ]},
 
               %% https is a list of IP addresses and TCP ports that the Riak
               %% HTTPS interface will bind.
-              %{https, [{ "127.0.0.1", 10018 }]},
+              %{https, [{ "127.0.0.1", 100{{item}}8 }]},
 
               %% Default cert and key locations for https can be overridden
               %% with the ssl config variable, for example:
@@ -46,11 +48,11 @@
 
               %% The cluster manager will listen for connections from remote
               %% clusters on this ip and port. Every node runs one CM.
-              {cluster_mgr, {"127.0.0.1", 10016 }},
+              {cluster_mgr, {"127.0.0.1", 100{{item}}6 }},
 
               %% riak_handoff_port is the TCP port that Riak uses for
               %% intra-cluster data handoff.
-              {handoff_port, 10019 },
+              {handoff_port, 1001{{item}}9 },
 
               %% To encrypt riak_core intra-cluster data handoff traffic,
               %% uncomment the following line and edit its path to an
