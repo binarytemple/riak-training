@@ -17,3 +17,6 @@
     - curl
     - libselinux-python
     - htop
+    - gcc-c++
+    - python-pip
+  - pip: name=bottle 
