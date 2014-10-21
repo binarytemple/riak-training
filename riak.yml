@@ -1,31 +1,40 @@
 - hosts: all
   sudo: True
   tasks:
+  
+  - stat: path=/home/ec2-user/riak/rebar.conf
+    register: riak_downloaded
+
+  - stat: path=/home/ec2-user/riak_ee/rebar.conf
+    register: riak_ee_downloaded
 
   - name: checkout riak_ee-1.4.10
     sudo: no
     git: repo=git@github.com:basho/riak_ee.git dest=riak_ee version=riak_ee-1.4.10
     register: git_result
-    when: not riak_installed.stat.exists
+    when: not riak_downloaded.stat.exists
 
   - name: checkout riak-1.4.10
     sudo: no
     git: repo=git@github.com:basho/riak.git dest=riak version=riak-1.4.10
     register: git_result
-    when: not riak_installed.stat.exists
+    when: not riak_ee_downloaded.stat.exists
+
+  - stat: path=/home/ec2-user/riak/dev/dev1/bin/riak
+    register: riak_devrel
 
   - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
-    register: riak_devrel_riak
+    register: riak_ee_devrel
 
   - name: build riak devrel 6
     sudo: no
     shell: "(cd /home/ec2-user/riak_ee/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
-    when: not riak_ee_devrel_riak.stat.exists
+    when: not riak_ee_devrel.stat.exists
 
   - name: build riak devrel 6 (2.0.1)
     sudo: no
     shell: "(cd /home/ec2-user/riak/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
-    when: not riak_devrel_riak.stat.exists
+    when: not riak_devrel.stat.exists
 
   - name: ulimit for ec2-user
     sudo: yes

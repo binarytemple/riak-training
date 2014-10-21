@@ -1,5 +1,4 @@
 - hosts: all
-  sudo: True
   tasks:
 
   - stat: path=/usr/local/maven/bin/mvn  
@@ -24,6 +23,7 @@
 #    when: not riak_installed.stat.exists
 #
   - name: install build dependencies
+    sudo: True
     action: yum name="{{item}}" enablerepo=epel state=present 
     with_items:
     - java-1.6.0-openjdk.x86_64
@@ -41,7 +41,7 @@
     register: erlang_downloaded
 
   - name: download erlang archive
-    sudo: True
+    sudo: no
     get_url: url=https://s3-eu-west-1.amazonaws.com/bhunt-erlangs/otp_src_R16B03.tar.gz dest=/home/ec2-user/otp_src_R16B03.tar.gz mode=0440 force=no
     when: not erlang_installed.stat.exists
 
@@ -49,13 +49,13 @@
     when: not erlang_installed.stat.exists
 
   - name: extract
-    sudo: True
+    sudo: no
     unarchive: src=/home/ec2-user/otp_src_R16B03.tar.gz dest=/home/ec2-user/otp_src_R16B03 copy=no creates=/home/ec2-user/otp_src_R16B03/otp_src_R16B03/README.md
     when: not erlang_installed.stat.exists
 
   - name: Install custom erlang
     sudo: True
-    shell: "cd /home/ec2-user/otp_src_R16B03/otp_src_R16B03/ && ./configure && make && make install"
+    shell: "cd /home/ec2-user/otp_src_R16B03/otp_src_R16B03/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
     when: not erlang_installed.stat.exists
 
 #  - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
