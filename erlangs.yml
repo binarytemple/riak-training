@@ -3,7 +3,7 @@
 
   - stat: path=/usr/local/maven/bin/mvn  
     register: mvn_installed
-#
+ 
   - name: checkout maven installer
     sudo: no
     git: repo=git@github.com:binarytemple/centos-maven-install.git dest=maven_install version=0.1
@@ -15,13 +15,6 @@
     shell: /bin/bash /home/ec2-user/maven_install/maven-install.sh 
     when: not mvn_installed.stat.exists
 
-
-#  - name: checkout riak_ee-2.0.1
-#    sudo: no
-#    git: repo=git@github.com:basho/riak_ee.git dest=riak_ee.2.0.1 version=riak_ee-2.0.1 
-#    register: git_result
-#    when: not riak_installed.stat.exists
-#
   - name: install build dependencies
     sudo: True
     action: yum name="{{item}}" enablerepo=epel state=present 
@@ -57,29 +50,3 @@
     sudo: True
     shell: "cd /home/ec2-user/otp_src_R15B01/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
     when: not erlang_installed.stat.exists
-
-#  - stat: path=/home/ec2-user/riak_ee/dev/dev1/bin/riak
-#    register: riak_devrel_riak
-#
-#  - name: build riak devrel 6
-#    sudo: no
-#    shell: "(cd /home/ec2-user/riak_ee/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
-#    when: not riak_devrel_riak.stat.exists
-#
-#  - name: build riak devrel 6 (2.0.1)
-#    sudo: no
-#    shell: "(cd /home/ec2-user/riak_ee.2.0.1/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.2.0.1.log"
-#    when: not riak_devrel_riak.stat.exists
-#
-##  - name: create riak_ee_5_nodes.tgz archive
-##    sudo: no 
-##    shell: "cd /home/ec2-user && tar zcvfp /ec2-user/riak_ee_5_nodes.tgz ./riak_ee --exclude=.git --exclude=deps &> /dev/null"
-#
-#  - name: ulimit for ec2-user/leshop user
-#    sudo: yes
-#    copy: src='../templates/etc_security_limits.d_leshop.conf' dest='/etc/security/limits.d/leshop.conf' mode=644
-#
-#- hosts: all
-#  sudo: True
-#  include: ./main.yml
-

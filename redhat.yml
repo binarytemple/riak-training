@@ -10,5 +10,3 @@
   
   - name: configure the basho 1.x repository
     yum: name=http://yum.basho.com/gpg/basho-release-6-1.noarch.rpm
-  
-  
