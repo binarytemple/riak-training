@@ -12,6 +12,10 @@
     - munin-netip-plugins
     - munin-nginx
     - munin-node
+    notify: 
+    - restart nginx
+    - restart munin-fcgi-graph
+    - restart munin-fcgi-html 
 
 - hosts: all
   sudo: yes
@@ -23,26 +27,22 @@
     git: repo=git@github.com:binarytemple/munin-riak.git dest=munin-riak
     register: munin_riak_result
 
-  - name: copy the riak plugin to munin plugins director
-    sudo: yes
-    shell: "cp /home/ec2-user/munin-riak/* /usr/share/munin/plugins/"
-  
-  #- name: link the plugin
-  #  sudo: yes
-  #  shell: "for i in /usr/share/munin/plugins/riak_* ; do f=$(basename $i); ln -s $i /etc/munin/plugins/$f  ;done"
-
-  - file: src=/usr/share/munin/plugins/riak_coord_redirs       dest=/etc/munin/plugins/riak_coord_redirs     state=link
-  - file: src=/usr/share/munin/plugins/riak_erlang_memory      dest=/etc/munin/plugins/riak_erlang_memory    state=link 
-  - file: src=/usr/share/munin/plugins/riak_erlang_processes   dest=/etc/munin/plugins/riak_erlang_processes state=link 
-  - file: src=/usr/share/munin/plugins/riak_node_get_put       dest=/etc/munin/plugins/riak_node_get_put     state=link  
-  - file: src=/usr/share/munin/plugins/riak_pbc_connection     dest=/etc/munin/plugins/riak_pbc_connection   state=link  
-  - file: src=/usr/share/munin/plugins/riak_read_repairs       dest=/etc/munin/plugins/riak_read_repairs     state=link 
-  - file: src=/usr/share/munin/plugins/riak_vnode_get_put      dest=/etc/munin/plugins/riak_vnode_get_put    state=link   
-
-  - name: make munin output directory the webroot
-    sudo: yes 
-    lineinfile: line='root /var/www/html/munin;' dest=/etc/nginx/nginx.conf state=present regexp='\s*root\s*\/.*;.*'
-    notify: restart nginx
+#  - name: copy the riak plugin to munin plugins director
+#    sudo: yes
+#    shell: "cp /home/ec2-user/munin-riak/* /usr/share/munin/plugins/"
+#  
+#  - file: src=/usr/share/munin/plugins/riak_coord_redirs       dest=/etc/munin/plugins/riak_coord_redirs     state=link
+#  - file: src=/usr/share/munin/plugins/riak_erlang_memory      dest=/etc/munin/plugins/riak_erlang_memory    state=link 
+#  - file: src=/usr/share/munin/plugins/riak_erlang_processes   dest=/etc/munin/plugins/riak_erlang_processes state=link 
+#  - file: src=/usr/share/munin/plugins/riak_node_get_put       dest=/etc/munin/plugins/riak_node_get_put     state=link  
+#  - file: src=/usr/share/munin/plugins/riak_pbc_connection     dest=/etc/munin/plugins/riak_pbc_connection   state=link  
+#  - file: src=/usr/share/munin/plugins/riak_read_repairs       dest=/etc/munin/plugins/riak_read_repairs     state=link 
+#  - file: src=/usr/share/munin/plugins/riak_vnode_get_put      dest=/etc/munin/plugins/riak_vnode_get_put    state=link   
+#
+#  - name: make munin output directory the webroot
+#    sudo: yes 
+#    lineinfile: line='root /var/www/html/munin;' dest=/etc/nginx/nginx.conf state=present regexp='\s*root\s*\/.*;.*'
+#    notify: restart nginx
 
 #  - name: copy nginx tempate
 #    sudo: yes
@@ -52,3 +52,9 @@
   handlers:
    - name: restart nginx
      service: name=nginx state=restarted
+
+   - name: restart munin-fcgi-graph
+     service: name=munin-fcgi-graph state=restarted
+
+   - name: restart munin-fcgi-html 
+     service: name=munin-fcgi-html state=restarted

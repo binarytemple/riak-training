@@ -1,0 +1,16 @@
+- hosts: all
+  tasks:
+
+  - stat: path=basho_bench/basho_bench
+    register: basho_bench_installed
+
+  - name: checkout basho_bench
+    sudo: no
+    git: repo=git@github.com:basho/basho_bench.git dest=basho_bench
+    register: git_result
+    when: not basho_bench_installed.stat.exists
+
+  - name: build basho_bench
+    sudo: no
+    shell: "cd /home/ec2-user/basho_bench && make"
+    when: not basho_bench_installed.stat.exists

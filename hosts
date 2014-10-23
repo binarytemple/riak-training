@@ -1,2 +1,2 @@
 [riak_cluster]
-riak-01 ansible_ssh_host=ec2-54-171-68-179.eu-west-1.compute.amazonaws.com ansible_ssh_port=22 ansible_ssh_user=ec2-user
+riak-01 ansible_ssh_host=ec2-54-171-52-238.eu-west-1.compute.amazonaws.com ansible_ssh_port=22 ansible_ssh_user=ec2-user

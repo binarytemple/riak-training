@@ -1,4 +1,8 @@
 - hosts: all
   sudo: False
   tasks:
+  - yum:  name=libyaml-devel enablerepo=epel state=present 
   - copy: src=ansible-local/ dest=/home/ec2-user/ 
+  - name: install ansible
+    sudo: True
+    pip: name=ansible

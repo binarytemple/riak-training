@@ -6,9 +6,9 @@
   sudo: True
   include: ./utils.yml
 
-- hosts: all
-  sudo: True
-  include: ./monitoring.yml
+#- hosts: all
+#  sudo: True
+#  include: ./monitoring.yml
 
 - hosts: riak_cluster
   sudo: True
@@ -23,3 +23,7 @@
 - hosts: all
   sudo: True
   include: ./riak.yml
+
+- hosts: all
+  sudo: True
+  include: ./copy-local-ansible.yml

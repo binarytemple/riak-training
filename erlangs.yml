@@ -42,11 +42,11 @@
     when: not erlang_installed.stat.exists
 
   - name: extract
-    sudo: no
+    sudo: True
     unarchive: src=/home/ec2-user/otp_src_R15B01.tar.gz dest=/home/ec2-user/ copy=no creates=/home/ec2-user/otp_src_R15B01/README.md
     when: not erlang_installed.stat.exists
 
   - name: Install custom erlang
     sudo: True
-    shell: "cd /home/ec2-user/otp_src_R15B01/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
+    shell: "chown -R ec2-user:ec2-user /home/ec2-user/otp_src_R15B01 && cd /home/ec2-user/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
     when: not erlang_installed.stat.exists
