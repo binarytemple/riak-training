@@ -1,0 +1,11 @@
+- hosts: all
+  tasks:
+
+  - stat: path=riak-ops/README.md
+    register:riak-ops
+
+  - name: checkout basho_bench
+    sudo: no
+    git: repo=git@github.com:roooms/riak-ops.git dest=riak-ops
+    register: git_result
+    when: not riak-ops.stat.exists
