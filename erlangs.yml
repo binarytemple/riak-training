@@ -1,19 +1,22 @@
 - hosts: all
   tasks:
+  - name: determine the installation user
+    sudo: False
+    set_fact: remote_user="{{ansible_env['USER']}}"
+
+  - name: determine the installation user home
+    sudo: False
+    set_fact: remote_home="{{ansible_env['HOME']}}"
+
 
   - stat: path=/usr/local/maven/bin/mvn  
     register: mvn_installed
- 
-  - name: checkout maven installer
-    sudo: no
-    git: repo=git@github.com:binarytemple/centos-maven-install.git dest=maven_install version=0.1
-    register: git_result
-    when: not mvn_installed.stat.exists
 
-  - name: run maven installer
-    sudo: True
-    shell: /bin/bash /home/ec2-user/maven_install/maven-install.sh 
-    when: not mvn_installed.stat.exists
+  - stat: path=/usr/local/bin/erl
+    register: erlang_installed
+  
+  - stat: path="{{remote_home}}/otp_src_R15B01/otp_src_R15B01/README.md"
+    register: erlang_downloaded
 
   - name: install build dependencies
     sudo: True
@@ -26,27 +29,31 @@
     - ncurses-devel 
     - java-1.6.0-openjdk-devel
     - openssl-devel
-
-  - stat: path=/usr/local/bin/erl
-    register: erlang_installed
-
-  - stat: path=/home/ec2-user/otp_src_R15B01/otp_src_R15B01/README.md
-    register: erlang_downloaded
-
-  - name: download erlang archive
+    - name: download erlang archive
     sudo: no
-    get_url: url=http://www.erlang.org/download/otp_src_R15B01.tar.gz dest=/home/ec2-user/otp_src_R15B01.tar.gz mode=0440 force=no
+    get_url: url=http://www.erlang.org/download/otp_src_R15B01.tar.gz dest={{remote_home}}/otp_src_R15B01.tar.gz mode=0440 force=no
     when: not erlang_installed.stat.exists
 
-  - file: path=/home/ec2-user/otp_src_R15B01 mode=0644 state=directory
+  - name: checkout maven installer
+    sudo: no
+    git: repo=git@github.com:binarytemple/centos-maven-install.git dest=maven_install version=0.1
+    register: git_result
+    when: not mvn_installed.stat.exists
+
+  - name: run maven installer
+    sudo: True
+    shell: /bin/bash "{{remote_home}}/maven_install/maven-install.sh" 
+    when: not mvn_installed.stat.exists
+
+  - file: path={{remote_home}}/otp_src_R15B01 mode=0644 state=directory
     when: not erlang_installed.stat.exists
 
   - name: extract
     sudo: True
-    unarchive: src=/home/ec2-user/otp_src_R15B01.tar.gz dest=/home/ec2-user/ copy=no creates=/home/ec2-user/otp_src_R15B01/README.md
+    unarchive: src="{{remote_home}}/otp_src_R15B01.tar.gz" dest="{{remote_home}}/" copy=no creates="{{remote_home}}/otp_src_R15B01/README.md"
     when: not erlang_installed.stat.exists
 
   - name: Install custom erlang
     sudo: True
-    shell: "chown -R ec2-user:ec2-user /home/ec2-user/otp_src_R15B01 && cd /home/ec2-user/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
+    shell: "chown -R ec2-user:ec2-user {{remote_home}}/otp_src_R15B01 && cd {{remote_home}}/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
     when: not erlang_installed.stat.exists
