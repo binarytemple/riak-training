@@ -29,7 +29,8 @@
     - ncurses-devel 
     - java-1.6.0-openjdk-devel
     - openssl-devel
-    - name: download erlang archive
+
+  - name: download erlang archive
     sudo: no
     get_url: url=http://www.erlang.org/download/otp_src_R15B01.tar.gz dest={{remote_home}}/otp_src_R15B01.tar.gz mode=0440 force=no
     when: not erlang_installed.stat.exists
