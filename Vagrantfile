@@ -3,11 +3,11 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
-# Ensure basho.riak-common dependency is in place
-if [ "up", "provision" ].include?(ARGV.first) && File.directory?("roles") &&
-  !(File.directory?("roles/basho.riak-common") || File.symlink?("roles/basho.riak-common"))
-  system("ansible-galaxy install -r roles.txt -p roles --ignore-errors")
-end
+## Ensure basho.riak-common dependency is in place
+#if [ "up", "provision" ].include?(ARGV.first) && File.directory?("roles") &&
+#  !(File.directory?("roles/basho.riak-common") || File.symlink?("roles/basho.riak-common"))
+#  system("ansible-galaxy install -r roles.txt -p roles --ignore-errors")
+#end
 
 # Grab local IP address for the proxy
 def local_ip
@@ -47,9 +47,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
     rescue Exception=> e
        abort("proxy enabled, and expected by VM, but not running")
     end
-    cluster.proxy.http     = "http://#{local_ip}:8123/"
-    cluster.proxy.https    = "http://#{local_ip}:8123/"
-    cluster.proxy.no_proxy = "localhost,127.0.0.1"
+    begin
+        cluster.proxy.http     = "http://#{local_ip}:8123/"
+        cluster.proxy.https    = "http://#{local_ip}:8123/"
+        cluster.proxy.no_proxy = "localhost,127.0.0.1"
+     rescue Exception=> e
+       print("could not determine local ip for proxy")
+    end
+
   end
 
   (6..6).each_with_index do |last_octet, index|
