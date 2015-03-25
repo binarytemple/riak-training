@@ -2,6 +2,11 @@
 - hosts: all
   sudo: yes
   tasks:
+
+  #- name: enable epel
+  #  sudo: True
+  #  shell: "yum-config-manager --enable epel"
+
   - name: upgrade all packages
     yum: name="*" state=latest
   - name: install multiple packages
@@ -19,4 +24,8 @@
     - htop
     - gcc-c++
     - python-pip
-  - pip: name=bottle 
+    - inotify-tools
+    - inotify-tools-devel
+    - python-inotify
+
+  - pip: name=bottle   state=present

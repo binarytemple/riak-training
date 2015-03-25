@@ -18,6 +18,7 @@
   tasks:
   - name: template all riak_ee dev nodes
     template: src=ee.app.config.j2 dest=riak_ee/dev/dev{{item}}/etc/app.config backup=yes
+    ignore_errors: yes
     with_items:
      - 1
      - 2
@@ -30,6 +31,7 @@
   tasks:
   - name: template all riak nodes
     template: src=app.config.j2 dest=riak/dev/dev{{item}}/etc/app.config backup=yes
+    ignore_errors: yes
     with_items:
      - 1
      - 2
@@ -42,6 +44,7 @@
   tasks:
   - name: template all riak_ee dev nodes (vm.args)
     template: src=vm.args.j2 dest=riak_ee/dev/dev{{item}}/etc/vm.args backup=yes
+    ignore_errors: yes
     with_items:
      - 1
      - 2
