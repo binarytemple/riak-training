@@ -56,5 +56,5 @@
 
   - name: Install custom erlang
     sudo: True
-    shell: "chown -R ec2-user:ec2-user {{remote_home}}/otp_src_R15B01 && cd {{remote_home}}/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
+    shell: "chown -R {{ansible_env['USER']}}:{{ansible_env['USER']}} {{remote_home}}/otp_src_R15B01 && cd {{remote_home}}/otp_src_R15B01/ && CFLAGS='-DOPENSSL_NO_EC=1' ./configure && make && make install"
     when: not erlang_installed.stat.exists

@@ -26,16 +26,17 @@ end
 $platform = ENV["ANSIBLE_RIAK_OS"]
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
-  
-  cluster.vm.box = if $platform == "UBUNTU"
-    "chef/ubuntu-12.04"
-  elsif $platform == "CENTOS"
-    "chef/centos-6.5"
-  elsif $platform == "DEBIAN"
-    "chef/debian-7.4"
-  else
-    "chef/ubuntu-12.04"
-  end
+  cluster.vm.box = "chef/centos-6.5"
+
+  #cluster.vm.box = if $platform == "UBUNTU"
+  #  "chef/ubuntu-12.04"
+  #elsif $platform == "CENTOS"
+  #  "chef/centos-6.5"
+  #elsif $platform == "DEBIAN"
+  #  "chef/debian-7.4"
+  #else
+  #  "chef/ubuntu-12.04"
+  #end
 
   # Wire up the proxy
   if Vagrant.has_plugin?("vagrant-proxyconf")
@@ -51,7 +52,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
     cluster.proxy.no_proxy = "localhost,127.0.0.1"
   end
 
-  (6..8).each_with_index do |last_octet, index|
+  (6..6).each_with_index do |last_octet, index|
     index = index + 1
 
     cluster.vm.define "riak-0#{index}" do |machine|
@@ -64,9 +65,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
           machine.vm.network "forwarded_port", guest: 8098, host: (10000 * index) + 8098
       end
 
-      if (index) == 3
+      if (index) == 1
         machine.vm.provision "ansible" do |ansible|
-          ansible.playbook = "./setup_riak.yml"
+          ansible.playbook = "./provision.yml"
           ansible.inventory_path = "./hosts"
           ansible.raw_arguments = [ "--timeout=60" ]
 

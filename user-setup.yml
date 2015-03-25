@@ -15,7 +15,6 @@
     - python-pycurl
     - s3cmd
     - curl
-  - name: vim for ec2-user
+  - name: vim for {{ansible_env['USER']}}
     sudo: yes
-    copy: src='templates/home_ec2-user_.vimrc' dest='/home/ec2-user/.vimrc' mode=644
-
+    copy: src='templates/home_{{ansible_env['USER']}}_.vimrc' dest='/home/{{ansible_env['USER']}}/.vimrc' mode=644

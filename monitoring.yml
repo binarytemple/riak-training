@@ -29,7 +29,7 @@
 
 #  - name: copy the riak plugin to munin plugins director
 #    sudo: yes
-#    shell: "cp /home/ec2-user/munin-riak/* /usr/share/munin/plugins/"
+#    shell: "cp /home/{{ansible_env['USER']}}/munin-riak/* /usr/share/munin/plugins/"
 #  
 #  - file: src=/usr/share/munin/plugins/riak_coord_redirs       dest=/etc/munin/plugins/riak_coord_redirs     state=link
 #  - file: src=/usr/share/munin/plugins/riak_erlang_memory      dest=/etc/munin/plugins/riak_erlang_memory    state=link 
