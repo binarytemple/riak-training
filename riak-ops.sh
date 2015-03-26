@@ -1,2 +1,2 @@
 source etc/check
-ansible-playbook -vvvv -i hosts riak-ops.yml
+ansible-playbook -vvvv -i ansible.hosts riak-ops.yml

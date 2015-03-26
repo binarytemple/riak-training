@@ -1,2 +1,2 @@
 source etc/check
-ansible-playbook -vvvv -i hosts monitoring.yml
+ansible-playbook -vvvv -i ansible.hosts monitoring.yml

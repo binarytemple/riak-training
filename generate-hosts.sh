@@ -33,7 +33,7 @@ if [[ -z $TARGET || -z $TARGET_USER ]]; then
     usage
 fi
 
-cat <<END > ./hosts
+cat <<END > ./ansible.hosts
 [riak_cluster]
 riak-01 ansible_ssh_host=${TARGET} ansible_ssh_port=22 ansible_ssh_user=${TARGET_USER}
 END

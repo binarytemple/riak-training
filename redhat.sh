@@ -1,2 +1,2 @@
 source etc/check
-ansible-playbook -vvvv -i hosts redhat.yml
+ansible-playbook -vvvv -i ansible.hosts redhat.yml

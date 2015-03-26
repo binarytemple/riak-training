@@ -3,12 +3,6 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
-## Ensure basho.riak-common dependency is in place
-#if [ "up", "provision" ].include?(ARGV.first) && File.directory?("roles") &&
-#  !(File.directory?("roles/basho.riak-common") || File.symlink?("roles/basho.riak-common"))
-#  system("ansible-galaxy install -r roles.txt -p roles --ignore-errors")
-#end
-
 # Grab local IP address for the proxy
 def local_ip
   @local_ip ||= begin
@@ -23,20 +17,15 @@ def local_ip
   end
 end
 
-$platform = ENV["ANSIBLE_RIAK_OS"]
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
   cluster.vm.box = "chef/centos-6.5"
 
-  #cluster.vm.box = if $platform == "UBUNTU"
-  #  "chef/ubuntu-12.04"
-  #elsif $platform == "CENTOS"
-  #  "chef/centos-6.5"
-  #elsif $platform == "DEBIAN"
-  #  "chef/debian-7.4"
-  #else
-  #  "chef/ubuntu-12.04"
-  #end
+  cluster.ssh.forward_agent = true
+
+  cluster.vm.provider "virtualbox" do |v|
+    v.memory = 4086
+    v.cpus = 4
+  end
 
   # Wire up the proxy
   if Vagrant.has_plugin?("vagrant-proxyconf")
@@ -54,36 +43,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
      rescue Exception=> e
        print("could not determine local ip for proxy")
     end
-
   end
 
-  (6..6).each_with_index do |last_octet, index|
-    index = index + 1
+  index = 1
+  cluster.vm.define "riak-0#{index}" do |machine|
+    machine.vm.hostname = "riak-0#{index}"
+    machine.vm.network "private_network", ip: "10.42.0.21"
 
-    cluster.vm.define "riak-0#{index}" do |machine|
-      machine.vm.hostname = "riak-0#{index}"
-      machine.vm.network "private_network", ip: "10.42.0.#{last_octet}"
+    puts machine.vm.hostname + ": Forwarding ports to local host" 
+    machine.vm.network "forwarded_port", guest: 8087, host: 18087 
+    machine.vm.network "forwarded_port", guest: 8098, host: 18098 
 
-      if ENV["ANSIBLE_RIAK_CS_FORWARD_PORTS"]
-          puts machine.vm.hostname + ": Forwarding ports to local host" 
-          machine.vm.network "forwarded_port", guest: 8087, host: (10000 * index) + 8087
-          machine.vm.network "forwarded_port", guest: 8098, host: (10000 * index) + 8098
-      end
-
-      if (index) == 1
-        machine.vm.provision "ansible" do |ansible|
-          ansible.playbook = "./provision.yml"
-          ansible.inventory_path = "./hosts"
-          ansible.raw_arguments = [ "--timeout=60" ]
-
-          ansible.extra_vars = {
+    machine.vm.provision "ansible" do |ansible|
+        ansible.playbook = "./provision.yml"
+        #ansible.playbook = "./copy-local-ansible.yml"
+        ansible.inventory_path = "./hosts"
+        ansible.raw_arguments = [ "--timeout=120" ]
+        ansible.extra_vars = {
             riak_iface: "eth1",
-          }
+        }
 
-          ansible.verbose = "vvvv"
-          ansible.limit = "all"
-        end
-      end
+        ansible.verbose = "vvvv"
+        ansible.limit = "all"
     end
   end
 end

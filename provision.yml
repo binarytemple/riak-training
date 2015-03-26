@@ -27,3 +27,5 @@
 - hosts: all
   sudo: True
   include: ./copy-local-ansible.yml
+  include: ./remove-proxy.yml
+  include: ./password.yml
