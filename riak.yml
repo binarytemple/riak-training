@@ -10,12 +10,6 @@
   - stat: path=/home/{{ansible_env['USER']}}/riak_ee/rebar.conf
     register: riak_ee_downloaded
 
-#  - name: checkout riak_ee-2.0.5
-#    sudo: no
-#    git: repo=git@github.com:basho/riak.git dest=riak_ee version=riak-2.0.5
-#    register: git_result
-#    when: not riak_downloaded.stat.exists
-
   - name: checkout riak-2.0.5
     sudo: no
     git: repo=git@github.com:basho/riak.git dest={{ansible_env['HOME']}}/riak version=riak-2.0.5
@@ -28,12 +22,6 @@
   - stat: path={{ansible_env['HOME']}}/riak_ee/dev/dev1/bin/riak
     register: riak_ee_devrel
 
-#  - name: build riak_ee devrel 6
-#    sudo: no
-#    shell: "(cd /home/{{ansible_env['USER']}}/riak_ee/ && rm -rf ./deps && ./rebar get-deps && make devrel DEVNODES=6  ) > /tmp/build-output.log"
-#    when: not riak_ee_devrel.stat.exists
-  
- 
   - name: build riak devrel 6
     sudo: no
     shell: "(cd {{ansible_env['HOME']}}/riak/ && make devrel DEVNODES=6  ) > /tmp/build-output.log"

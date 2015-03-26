@@ -1,4 +1,5 @@
 - hosts: all
+#  TODO: Get working on Centos 6.5
 #  tasks:
 #
 #  - stat: path=basho_bench/basho_bench
